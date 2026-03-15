@@ -1,0 +1,44 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test-laravel-api-travel-orders
+    volumes:
+      - .:/var/www/html
+    networks:
+      - laravel
+
+  nginx:
+    image: nginx:latest
+    container_name: test-laravel-api-travel-orders-nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - laravel
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: test-laravel-api-travel-orders-mysql
+    environment:
+      MYSQL_DATABASE: test-laravel-api-travel-orders
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  mysql_data:

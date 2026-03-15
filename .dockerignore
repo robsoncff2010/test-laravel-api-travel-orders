@@ -1,0 +1,35 @@
+# Ignorar dependências locais
+/vendor
+/node_modules
+
+# Ignorar arquivos de configuração sensíveis
+.env
+.env.*
+*.local
+
+# Ignorar arquivos de versionamento
+.git
+.gitignore
+
+# Ignorar logs e caches
+*.log
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+
+# Ignorar arquivos temporários
+*.swp
+*.tmp
+*.bak
+
+# Ignorar arquivos de IDE/editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignorar arquivos do Composer e NPM que não são necessários no container
+composer.lock
+package-lock.json
+yarn.lock

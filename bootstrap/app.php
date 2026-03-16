@@ -20,19 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
             $message = 'Erro interno no servidor';
 
             // Exceções de domínio
-            if ($e instanceof \App\Exceptions\Domain\Auth\InvalidCredentialsException) {
-                $status = 401;
-                $message = $e->getMessage();
-            }
-
-            if ($e instanceof \App\Exceptions\Domain\TravelOrder\InvalidOrderStatusException) {
-                $status = 402;
-                $message = $e->getMessage();
-            }
-
-            if ($e instanceof \DomainException) {
-                $status = 422;
-                $message = $e->getMessage();
+            if ($e instanceof \App\Exceptions\Domain\DomainExceptionInterface) {
+                return response()->json([
+                    'success' => false,
+                    'error_code' => $e->getErrorCode(),
+                    'message' => $e->getMessage(),
+                ], $e->getStatusCode());
             }
 
             // Exceções comuns do Laravel

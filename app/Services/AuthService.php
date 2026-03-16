@@ -22,7 +22,7 @@ class AuthService
     // Autenticar usuário
     public function login(array $credentials): ?string
     {
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             throw new InvalidCredentialsException('Credenciais inválidas.');
         }
 

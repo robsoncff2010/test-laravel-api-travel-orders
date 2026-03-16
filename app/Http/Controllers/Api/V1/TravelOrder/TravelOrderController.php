@@ -31,6 +31,12 @@ class TravelOrderController extends Controller
             'success' => true,
             'message' => 'Lista de Pedidos recuperada com sucesso',
             'data'    => TravelOrderResource::collection($orders),
+            'meta'    => [
+                'total'        => $orders->total(),
+                'per_page'     => $orders->perPage(),
+                'current_page' => $orders->currentPage(),
+                'last_page'    => $orders->lastPage(),
+            ],
         ]);
     }
 

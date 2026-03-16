@@ -35,6 +35,9 @@ class TravelOrderResource extends JsonResource
                     'message'    => $notification->message,
                     'status'     => $notification->type,
                     'created_at' => $notification->created_at,
+
+                    // Caso precisar retornar datas convertidas - mas não seria boa pratica
+                    // 'created_at_converted' => $notification->created_at->setTimezone('America/Sao_Paulo')->format('Y-m-d\TH:i:sP')
                 ];
             }),
         ];

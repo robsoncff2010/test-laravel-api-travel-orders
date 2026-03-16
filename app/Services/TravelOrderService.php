@@ -40,8 +40,29 @@ class TravelOrderService
 
         // Filtro por período (datas de viagem)
         if (!empty($filters['from']) && !empty($filters['to'])) {
-            $query->whereBetween('departure_date', [$filters['from'], $filters['to']])
-                  ->orWhereBetween('return_date', [$filters['from'], $filters['to']]);
+            $query->where(function ($q) use ($filters) {
+                // pedidos criados dentro da faixa
+                $q->whereBetween('created_at', [$filters['from'], $filters['to']])
+                // viagens que caem dentro da faixa
+                ->orWhereBetween('departure_date', [$filters['from'], $filters['to']])
+                ->orWhereBetween('return_date', [$filters['from'], $filters['to']])
+                ->orWhere(function ($q2) use ($filters) {
+                    $q2->where('departure_date', '<', $filters['from'])
+                        ->where('return_date', '>', $filters['to']);
+                });
+            });
+        } elseif (!empty($filters['from'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('created_at', '>=', $filters['from'])
+                ->orWhere('departure_date', '>=', $filters['from'])
+                ->orWhere('return_date', '>=', $filters['from']);
+            });
+        } elseif (!empty($filters['to'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('created_at', '<=', $filters['to'])
+                ->orWhere('departure_date', '<=', $filters['to'])
+                ->orWhere('return_date', '<=', $filters['to']);
+            });
         }
 
         return $query->orderByDesc('created_at')->paginate(10);
@@ -59,10 +80,15 @@ class TravelOrderService
         $order     = TravelOrder::findOrFail($id);
         $oldStatus = $order->status;
 
+        // Não permite o solicitante alterar para o mesmo status, para não ficar redundante
+        if ($status === $order->status) {
+            throw new InvalidOrderStatusException("Pedido já se encontra com o status de '{$order->status}'");
+        }
+
         // Usuário solicitante não pode aprovar ou cancelar
         // Só pode cancelar se estiver aprovado
         if ($status === TravelOrder::CANCELLED && $order->status !== TravelOrder::APPROVED) {
-            throw new InvalidOrderStatusException('Só é possível cancelar ordens aprovadas.');
+            throw new InvalidOrderStatusException('Só é possível cancelar pedidos aprovadas.');
         }
 
         $order->update(['status' => $status]);

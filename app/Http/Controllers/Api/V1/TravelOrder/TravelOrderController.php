@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\V1\TravelOrder;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Resources\TravelOrderResource;
 use App\Services\TravelOrderService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\TravelOrder\IndexTravelOrderRequest;
 use App\Http\Requests\TravelOrder\StoreTravelOrderRequest;
 use App\Http\Requests\TravelOrder\UpdateTravelOrderStatusRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,7 +23,7 @@ class TravelOrderController extends Controller
     }
 
     // Listar pedidos (com filtros opcionais)
-    public function index(Request $request): JsonResponse
+    public function index(IndexTravelOrderRequest $request): JsonResponse
     {
         $orders = $this->travelOrderService->list($request->user(), $request->all());
 

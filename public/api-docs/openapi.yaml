@@ -1,0 +1,454 @@
+openapi: 3.0.3
+info:
+  title: Travel Orders API
+  description: API para autenticação e gerenciamento de pedidos de viagem
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/robsonsa/TravelOrdersAPI/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:8000/api/v1
+tags:
+- name: auth
+  description: Rotas de autenticação
+- name: travel-orders
+  description: Rotas de pedidos de viagem
+paths:
+  /register:
+    post:
+      tags:
+      - auth
+      summary: Registrar novo usuário
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/register_body"
+        required: true
+      responses:
+        "201":
+          description: Usuário registrado com sucesso
+          content:
+            application/json:
+              example:
+                success: true
+                message: Usuário registrado com sucesso
+                user:
+                  id: 9
+                  name: Teste Pessoa 10
+                  email: teste12@example.com
+                  created_at: 2026-03-16T19:30:37.000000Z
+                  updated_at: 2026-03-16T19:30:37.000000Z
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+  /login:
+    post:
+      tags:
+      - auth
+      summary: Login de usuário
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/login_body"
+        required: true
+      responses:
+        "200":
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              example:
+                success: true
+                message: Login realizado com sucesso
+                token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+                user:
+                  id: 6
+                  name: Robson
+                  email: robson@example.com
+                  created_at: 2026-03-15T02:29:31.000000Z
+                  updated_at: 2026-03-15T02:29:31.000000Z
+        "422":
+          description: Credenciais inválidas
+          content:
+            application/json:
+              example:
+                success: false
+                error_code: INVALID_CREDENTIALS
+                message: Credenciais inválidas.
+  /logout:
+    post:
+      tags:
+      - auth
+      summary: Logout do usuário
+      responses:
+        "200":
+          description: Logout realizado com sucesso
+          content:
+            application/json:
+              example:
+                success: true
+                message: Logout realizado com sucesso
+        "500":
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+      security:
+      - bearerAuth: []
+  /me:
+    get:
+      tags:
+      - auth
+      summary: Detalhes do usuário autenticado
+      responses:
+        "200":
+          description: Dados do usuário
+          content:
+            application/json:
+              example:
+                data:
+                  id: 6
+                  name: Robson
+                  email: robson@example.com
+                  created_at: 2026-03-15T02:29:31.000000Z
+                  updated_at: 2026-03-15T02:29:31.000000Z
+        "500":
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+      security:
+      - bearerAuth: []
+  /travel-orders:
+    get:
+      tags:
+      - travel-orders
+      summary: Listar pedidos de viagem
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - pendente
+          - aprovado
+          - cancelado
+      - name: destination
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: Lista de pedidos
+          content:
+            application/json:
+              example:
+                success: true
+                message: Lista de Pedidos recuperada com sucesso
+                data:
+                - $ref: "#/components/schemas/TravelOrder"
+                meta:
+                  total: 1
+                  per_page: 10
+                  current_page: 1
+                  last_page: 1
+        "500":
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - travel-orders
+      summary: Criar pedido de viagem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/travelorders_body"
+        required: true
+      responses:
+        "201":
+          description: Pedido criado
+          content:
+            application/json:
+              example:
+                success: true
+                message: Pedido criada com sucesso
+                data:
+                  $ref: "#/components/schemas/TravelOrder"
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+      security:
+      - bearerAuth: []
+  /travel-orders/{id}:
+    get:
+      tags:
+      - travel-orders
+      summary: Detalhes de um pedido
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Detalhes do pedido
+          content:
+            application/json:
+              example:
+                success: true
+                message: Detalhes do pedido recuperados com sucesso
+                data:
+                  $ref: "#/components/schemas/TravelOrder"
+        "500":
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+      security:
+      - bearerAuth: []
+  /travel-orders/{id}/status:
+    put:
+      tags:
+      - travel-orders
+      summary: Atualizar status do pedido
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/id_status_body"
+        required: true
+      responses:
+        "200":
+          description: Status atualizado com sucesso
+          content:
+            application/json:
+              example:
+                success: true
+                message: Status do pedido atualizado com sucesso
+                data:
+                  id: 2
+                  user_id: 6
+                  requester_name: Robson
+                  destination: São Paulo
+                  departure_date: 2026-03-21
+                  return_date: 2026-03-25
+                  status: aprovado
+                  created_at: 2026-03-15T23:54:59.000000Z
+                  updated_at: 2026-03-16T20:01:42.000000Z
+                  user:
+                    id: 6
+                    name: Robson
+                    email: robson@example.com
+                  notifications:
+                  - id: 12
+                    message: Status alterado de 'solicitado' para 'aprovado'
+                    status: aprovado
+                    created_at: 2026-03-16T20:01:42.000000Z
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+              example:
+                success: false
+                message: Erro de validação
+                errors:
+                  status:
+                  - O status é obrigatório.
+        "500":
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthErrorResponse"
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    ValidationErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Erro de validação
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            email:
+            - Este e-mail já está cadastrado.
+    AuthErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error_code:
+          type: string
+          example: UnauthorizedHttpException
+        message:
+          type: string
+          example: The token has been blacklisted
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    TravelOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        requester_name:
+          type: string
+        destination:
+          type: string
+        departure_date:
+          type: string
+          format: date
+        return_date:
+          type: string
+          format: date
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/User"
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+    register_body:
+      required:
+      - email
+      - name
+      - password
+      - password_confirmation
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          minLength: 6
+          type: string
+        password_confirmation:
+          minLength: 6
+          type: string
+    login_body:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    travelorders_body:
+      required:
+      - departure_date
+      - destination
+      - return_date
+      type: object
+      properties:
+        destination:
+          type: string
+        departure_date:
+          type: string
+          format: date
+        return_date:
+          type: string
+          format: date
+    id_status_body:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - pendente
+          - aprovado
+          - cancelado
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -18,6 +18,10 @@ class TravelOrder extends Model
         'status',
     ];
 
+    public const REQUESTED = 'solicitado';
+    public const APPROVED  = 'aprovado';
+    public const CANCELLED = 'cancelado';
+
     // Relação: uma ordem pertence a um usuário
     public function user()
     {
@@ -27,6 +31,6 @@ class TravelOrder extends Model
     // Relação: uma ordem pode ter várias notificações
     public function notifications()
     {
-        return $this->hasMany(TravelOrderNotification::class);
+        return $this->hasMany(TravelOrderNotification::class, 'travel_order_id');
     }
 }

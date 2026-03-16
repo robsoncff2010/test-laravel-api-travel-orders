@@ -16,6 +16,9 @@ class TravelOrderNotification extends Model
         'message',
     ];
 
+    public const APPROVED  = 'aprovado';
+    public const CANCELLED = 'cancelado';
+
     // notificação pertence a uma ordem
     public function travelOrder()
     {

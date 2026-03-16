@@ -15,18 +15,33 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Exception $e, $request) {
+        $exceptions->render(function (\Throwable $e, $request) {
             $status  = 500;
             $message = 'Erro interno no servidor';
 
-            //detalhes para análise interna e posteriormente pode ser enviado para um serviço de monitoramento
-            logger()->error($e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            // Exceções de domínio
+            if ($e instanceof \App\Exceptions\Domain\Auth\InvalidCredentialsException) {
+                $status = 401;
+                $message = $e->getMessage();
+            }
 
+            if ($e instanceof \App\Exceptions\Domain\TravelOrder\InvalidOrderStatusException) {
+                $status = 402;
+                $message = $e->getMessage();
+            }
+
+            if ($e instanceof \DomainException) {
+                $status = 422;
+                $message = $e->getMessage();
+            }
+
+            // Exceções comuns do Laravel
             if ($e instanceof \Illuminate\Validation\ValidationException) {
                 $status  = 422;
                 $message = 'Erro de validação';
 
                 return response()->json([
+                    'success' => false,
                     'message' => $message,
                     'errors'  => $e->errors(),
                 ], $status);
@@ -42,18 +57,28 @@ return Application::configure(basePath: dirname(__DIR__))
                 $message = 'Recurso não encontrado';
             }
 
-            // Se estamos em homologação/dev (APP_DEBUG=true), mostra detalhes
+            // Logging estruturado (sempre)
+            logger()->error($e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'type'  => class_basename($e),
+            ]);
+
+            // Em dev ou homologação mostra detalhes
             if (config('app.debug')) {
                 return response()->json([
                     'success' => false,
+                    'error_code' => method_exists($e, 'getErrorCode')
+                        ? $e->getErrorCode()
+                        : class_basename($e),
                     'message' => $e->getMessage(),
                 ], $status);
             }
 
-            // Em produção, resposta genérica e segura
+            // Em produção, resposta genérica
             return response()->json([
                 'success' => false,
                 'message' => $message,
             ], $status);
         });
-    })->create();
+    })
+    ->create();

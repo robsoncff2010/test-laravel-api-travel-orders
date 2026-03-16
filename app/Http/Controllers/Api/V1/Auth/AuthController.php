@@ -8,12 +8,14 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
     public function __construct(private AuthService $authService) {}
 
-    public function register(RegisterRequest $request)
+    // Registra usuário
+    public function register(RegisterRequest $request): JsonResponse
     {
         $user = $this->authService->register($request->validated());
 
@@ -24,17 +26,10 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(LoginRequest $request)
+    // Autentica usuário
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validated();
-        $token       = $this->authService->login($credentials);
-
-        if (! $token) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Credenciais inválidas'
-            ], 401);
-        }
+        $token = $this->authService->login($request->validated());
 
         return response()->json([
             'success' => true,
@@ -44,17 +39,19 @@ class AuthController extends Controller
         ]);
     }
 
-
-    public function logout(Request $request)
+    // Remove autenticação usuário
+    public function logout(): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authService->logout();
+
         return response()->json([
             'success' => true,
             'message' => 'Logout realizado com sucesso'
         ]);
     }
 
-    public function me(Request $request)
+    // Retorna usuário autenticado
+    public function me(Request $request): UserResource
     {
         return new UserResource($request->user());
     }

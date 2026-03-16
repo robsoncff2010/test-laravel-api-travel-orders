@@ -4,8 +4,6 @@ info:
   description: API para autenticação e gerenciamento de pedidos de viagem
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/robsonsa/TravelOrdersAPI/1.0.0
-  description: SwaggerHub API Auto Mocking
 - url: http://localhost:8000/api/v1
 tags:
 - name: auth
@@ -136,7 +134,7 @@ paths:
         schema:
           type: string
           enum:
-          - pendente
+          - solicitado
           - aprovado
           - cancelado
       - name: destination
@@ -444,7 +442,7 @@ components:
         status:
           type: string
           enum:
-          - pendente
+          - solicitado
           - aprovado
           - cancelado
   securitySchemes:

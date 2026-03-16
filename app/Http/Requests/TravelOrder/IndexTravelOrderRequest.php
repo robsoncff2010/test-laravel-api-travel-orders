@@ -14,7 +14,7 @@ class IndexTravelOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'      => ['nullable', 'string', 'in:pendente,aprovado,cancelado'],
+            'status'      => ['nullable', 'string', 'in:solicitado,aprovado,cancelado'],
             'destination' => ['nullable', 'string', 'max:255'],
             'from'        => ['nullable', 'date'],
             'to'          => ['nullable', 'date', 'after_or_equal:from'],
@@ -24,7 +24,7 @@ class IndexTravelOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'status.in'          => 'O status deve ser um dos seguintes valores: pendente, aprovado ou cancelado.',
+            'status.in'          => 'O status deve ser um dos seguintes valores: solicitado, aprovado ou cancelado.',
             'destination.string' => 'O destino deve ser um texto válido.',
             'destination.max'    => 'O destino não pode ultrapassar 255 caracteres.',
             'from.date'          => 'A data inicial deve ser uma data válida.',

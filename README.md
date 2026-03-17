@@ -4,7 +4,7 @@
 🚀 Sobre o Projeto
 
 Este projeto é um microsserviço desenvolvido em Laravel para o gerenciamento de pedidos de viagem corporativa.  
-O microsserviço expõe uma API REST que permite:
+O microsserviço expõe uma API REST
 
 📊 Funcionalidades
 - Autenticação
@@ -13,7 +13,6 @@ O microsserviço expõe uma API REST que permite:
     - Rate limiting para limitar requisições.
 - Pedidos de Viagem
     - Criação de pedidos com destino, data de ida e volta.
-    - Status inicial sempre como "solicitado".
     - Atualização de status apenas para "aprovado" ou "cancelado".
     - Regras de negócio: dono do pedido não pode alterar o próprio status.
 - Notificações

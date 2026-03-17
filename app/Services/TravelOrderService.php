@@ -9,7 +9,7 @@ use App\Exceptions\Domain\TravelOrder\InvalidOrderStatusException;
 
 class TravelOrderService
 {
-    // Criar uma nova ordem de viagem
+    // Criar um novo pedido de viagem
     public function create(array $data, $user): TravelOrder
     {
         return TravelOrder::create([
@@ -22,7 +22,51 @@ class TravelOrderService
         ]);
     }
 
-    // Listar ordens do usuário autenticado com filtros
+    // Criar um novo pedido de viagem
+    public function update(array $data, $id): TravelOrder
+    {
+        $order = TravelOrder::findOrFail($id);
+
+        $order->update([
+            'destination'    => $data['destination']    ?? $order->destination,
+            'departure_date' => $data['departure_date'] ?? $order->departure_date,
+            'return_date'    => $data['return_date']    ?? $order->return_date,
+        ]);
+
+        return $order->fresh();
+    }
+
+    // Atualizar status do pedido
+    public function updateStatus(int $id, string $status): TravelOrder
+    {
+        $order     = TravelOrder::findOrFail($id);
+        $oldStatus = $order->status;
+
+        // Não permite o solicitante alterar para o mesmo status, para não ficar redundante
+        if ($status === $order->status) {
+            throw new InvalidOrderStatusException("Pedido já se encontra com o status de '{$order->status}'");
+        }
+
+        // Usuário solicitante não pode aprovar ou cancelar
+        // Só pode cancelar se estiver aprovado
+        if (!in_array($status, [TravelOrder::APPROVED, TravelOrder::CANCELLED])) {
+            throw new InvalidOrderStatusException('Status inválido! Só é permitido atualizar para aprovado ou cancelado.');
+        }
+
+        $order->update(['status' => $status]);
+
+        event(new TravelOrderStatusChanged($order, $oldStatus, $status));
+
+        return $order->fresh(['user', 'notifications']);
+    }
+
+    // Buscar um pedido específico
+    public function find(int $id): TravelOrder
+    {
+        return TravelOrder::with(['user', 'notifications'])->findOrFail($id);
+    }
+
+    // Listar pedidos do usuário autenticado com filtros
     public function list($user, array $filters = []): LengthAwarePaginator
     {
         $query = TravelOrder::with(['user', 'notifications'])
@@ -41,8 +85,10 @@ class TravelOrderService
         // Filtro por período (datas de viagem)
         if (!empty($filters['from']) && !empty($filters['to'])) {
             $query->where(function ($q) use ($filters) {
+
                 // pedidos criados dentro da faixa
                 $q->whereBetween('created_at', [$filters['from'], $filters['to']])
+
                 // viagens que caem dentro da faixa
                 ->orWhereBetween('departure_date', [$filters['from'], $filters['to']])
                 ->orWhereBetween('return_date', [$filters['from'], $filters['to']])
@@ -66,35 +112,5 @@ class TravelOrderService
         }
 
         return $query->orderByDesc('created_at')->paginate(10);
-    }
-
-    // Buscar uma ordem específica
-    public function find(int $id): TravelOrder
-    {
-        return TravelOrder::with(['user', 'notifications'])->findOrFail($id);
-    }
-
-    // Atualizar status da ordem
-    public function updateStatus(int $id, string $status): TravelOrder
-    {
-        $order     = TravelOrder::findOrFail($id);
-        $oldStatus = $order->status;
-
-        // Não permite o solicitante alterar para o mesmo status, para não ficar redundante
-        if ($status === $order->status) {
-            throw new InvalidOrderStatusException("Pedido já se encontra com o status de '{$order->status}'");
-        }
-
-        // Usuário solicitante não pode aprovar ou cancelar
-        // Só pode cancelar se estiver aprovado
-        if ($status === TravelOrder::CANCELLED && $order->status !== TravelOrder::APPROVED) {
-            throw new InvalidOrderStatusException('Só é possível cancelar pedidos aprovadas.');
-        }
-
-        $order->update(['status' => $status]);
-
-        event(new TravelOrderStatusChanged($order, $oldStatus, $status));
-
-        return $order->fresh(['user', 'notifications']);
     }
 }

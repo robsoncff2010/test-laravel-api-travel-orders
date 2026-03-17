@@ -21,16 +21,19 @@ Route::prefix('v1')->group(function () {
             ->middleware('throttle:me');
 
         // Pedidos de viagem
-        Route::get('/travel-orders', [TravelOrderController::class, 'index'])
-            ->middleware('throttle:orders');
-
         Route::post('/travel-orders', [TravelOrderController::class, 'store'])
-            ->middleware('throttle:orders');
+            ->middleware('throttle:travel-orders');
+
+        Route::put('/travel-orders/{id}', [TravelOrderController::class, 'update'])
+            ->middleware('throttle:travel-orders');
+
+        Route::patch('/travel-orders/{id}/status', [TravelOrderController::class, 'updateStatus'])
+            ->middleware('throttle:travel-orders');
 
         Route::get('/travel-orders/{id}', [TravelOrderController::class, 'show'])
-            ->middleware('throttle:orders');
+            ->middleware('throttle:travel-orders');
 
-        Route::put('/travel-orders/{id}/status', [TravelOrderController::class, 'updateStatus'])
-            ->middleware('throttle:orders');
+        Route::get('/travel-orders', [TravelOrderController::class, 'index'])
+            ->middleware('throttle:travel-orders');
     });
 });

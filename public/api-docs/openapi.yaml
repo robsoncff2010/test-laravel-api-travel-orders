@@ -205,6 +205,7 @@ paths:
                 $ref: "#/components/schemas/ValidationErrorResponse"
       security:
       - bearerAuth: []
+
   /travel-orders/{id}:
     get:
       tags:
@@ -234,8 +235,62 @@ paths:
                 $ref: "#/components/schemas/AuthErrorResponse"
       security:
       - bearerAuth: []
-  /travel-orders/{id}/status:
     put:
+      tags:
+        - travel-orders
+      summary: Atualizar pedido de viagem
+      description: Atualiza os dados de um pedido de viagem existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do pedido de viagem
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/travelorders_body"
+      responses:
+        "200":
+          description: Pedido atualizado com sucesso
+          content:
+            application/json:
+              example:
+                success: true
+                message: "Pedido atualizado com sucesso"
+                data:
+                  id: 11
+                  user_id: 7
+                  requester_name: "Teste Pessoa 2"
+                  destination: "Belo Horizonte"
+                  departure_date: "2026-03-21"
+                  return_date: "2026-03-29"
+                  status: "aprovado"
+                  created_at: "2026-03-16T03:33:54.000000Z"
+                  updated_at: "2026-03-16T23:42:40.000000Z"
+                  user:
+                    id: 7
+                    name: "Teste Pessoa 2"
+                    email: "teste@example.com"
+                  notifications:
+                    - id: 4
+                      message: "Status alterado de 'solicitado' para 'aprovado'"
+                      status: "aprovado"
+                      created_at: "2026-03-16T04:10:20.000000Z"
+
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrorResponse"
+      security:
+        - bearerAuth: []
+  /travel-orders/{id}/status:
+    patch:
       tags:
       - travel-orders
       summary: Atualizar status do pedido
@@ -286,10 +341,8 @@ paths:
                 $ref: "#/components/schemas/ValidationErrorResponse"
               example:
                 success: false
-                message: Erro de validação
-                errors:
-                  status:
-                  - O status é obrigatório.
+                error_code: "ORDER_INVALID_STATUS"
+                message: "Status inválido! Só é permitido atualizar para aprovado ou cancelado."
         "500":
           description: Token inválido
           content:

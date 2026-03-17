@@ -1,59 +1,115 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a><a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a><a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a><a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+🚀 Sobre o Projeto
 
-## About Laravel
+Este projeto é um microsserviço desenvolvido em Laravel para o gerenciamento de pedidos de viagem corporativa.  
+O microsserviço expõe uma API REST que permite:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+📊 Funcionalidades
+- Autenticação
+    - Login e registro de usuários com JWT.
+    - Middleware de autenticação para proteger rotas.
+    - Rate limiting para limitar requisições.
+- Pedidos de Viagem
+    - Criação de pedidos com destino, data de ida e volta.
+    - Status inicial sempre como "solicitado".
+    - Atualização de status apenas para "aprovado" ou "cancelado".
+    - Regras de negócio: dono do pedido não pode alterar o próprio status.
+- Notificações
+    - Registro automático de notificações em mudanças de status.
+    - Eventos e listeners para monitorar alterações.
+    - Histórico de notificações vinculado ao pedido e ao usuário.
+- Usuários
+    - Gerenciamento de dados pessoais.
+    - Controle de permissões via Policies.
+    - Logout e edição de informações.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🛠 Tecnologias utilizadas
+Backend
+- PHP 8.5
+- Laravel 12
+- Eloquent ORM
+- Middleware de autenticação
+- JWT (JSON Web Token) – autenticação e autorização
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Banco de Dados
+- MySQL
+- Migrations
+- Seeders & Factories
 
-## Learning Laravel
+Documentação
+- OpenAPI 3.0.3 (Swagger)
+- Swagger UI
+- Schemas reutilizáveis – padronização de modelos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Infraestrutura
+- Composer - gerenciador de dependências PHP
+- PHPUnit - testes automatizados
+- Docker - containerização do ambiente
+  - App - Laravel/PHP-FPM → porta 8000  
+  - Nginx - proxy reverso
+  - MySQL - banco de dados
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+📐 Versionamento da API
+- Todas as rotas estão versionadas sob o prefixo `/api/v1/*`, garantindo compatibilidade futura e permitindo evolução da API sem quebra de clientes existentes.
 
-## Laravel Sponsors
+📂 Estrutura do Projeto
+- Models → entidades principais da aplicação (User, TravelOrder, TravelOrderNotification)
+- Controllers → responsáveis por receber requisições e aplicar regras de negócio
+- Policies → controle de permissões e regras de autorização
+- Events & Listeners → disparo e tratamento de eventos quando o status de uma ordem muda
+- Exceptions → classes customizadas para regras de negócio
+- Middleware → autenticação JWT, rate limiting e proteção das rotas
+- Routes → organizadas sob /api/v1/* (login, register, travel-orders, status)
+- Migrations & Seeders → definição e popularização do banco de dados
+- Resources (Transformers) → padronização das respostas JSON
+- Swagger/OpenAPI → documentação integrada dentro da API
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+⚙️ Práticas adicionais
+- Exceções customizadas: tratamento diferenciado para ambientes de teste e produção
+- Consultas otimizadas: uso de `whenLoaded` para evitar N+1
+- Segurança: rate limiting para proteção contra abuso
+- Autorização: policies para regras de permissão
+- Eventos e listeners: monitoramento e execução automática em mudanças de status
+- Boas práticas de dados: datas sempre em UTC
+- Documentação integrada: Swagger disponível dentro da API (http://localhost:8000/api/documentation)
 
-### Premium Partners
+🧪 Testes
+O projeto inclui testes utilizando PHPUnit, cobrindo cenários essenciais:
+- Postman / cURL → testes manuais das rotas
+- PHPUnit → testes automatizados
+- Swagger UI → execução de chamadas diretamente na documentação
+- Login de usuário → valida credenciais e autenticação via JWT.
+- Criação de pedidos de viagem → garante que os dados obrigatórios (destino, datas) sejam informados corretamente.
+- Atualização de status → valida regras de negócio (somente "aprovado" ou "cancelado").
+- Exceções → assegura que exceções customizadas sejam lançadas corretamente em casos inválidos.
+- Notificações → verifica se eventos e listeners disparam notificações ao alterar status.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+▶️ Como Executar
+Clonar o repositório
+ - git clone https://github.com/robsoncff2010/test-laravel-api-travel-orders.git
 
-## Contributing
+Instalar dependencias
+ - composer install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+▶️ Executando com Docker
+Subir os containers
+ - docker compose up -d --build
 
-## Code of Conduct
+Gerar chave
+ - docker compose exec app php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Criar migrations
+ - docker compose exec app php artisan migrate
 
-## Security Vulnerabilities
+Limpar caches
+ - docker compose exec app php artisan config:clear
+ - docker compose exec app php artisan cache:clear
+ - docker compose exec app php artisan route:clear
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Acessar o API (porta configurada no docker-compose)
+- http://localhost:8000/api/v1
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+📜 Licença
+Este projeto está licenciado sob a MIT License, permitindo uso, modificação e distribuição, desde que seja mantida a nota de licença original.

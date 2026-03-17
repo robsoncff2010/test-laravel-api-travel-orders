@@ -22,13 +22,28 @@ return Application::configure(basePath: dirname(__DIR__))
             // Exceções de domínio
             if ($e instanceof \App\Exceptions\Domain\DomainExceptionInterface) {
                 return response()->json([
-                    'success' => false,
+                    'success'    => false,
                     'error_code' => $e->getErrorCode(),
-                    'message' => $e->getMessage(),
+                    'message'    => $e->getMessage(),
                 ], $e->getStatusCode());
             }
 
             // Exceções comuns do Laravel
+            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                $status  = 401;
+                $message = 'Não autenticado';
+            }
+
+            // Exceções comuns do Eloquent
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ||
+                $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+                return response()->json([
+                    'success'    => false,
+                    'error_code' => 'NotFound',
+                    'message'    => 'Recurso não encontrado',
+                ], 404);
+            }
+
             if ($e instanceof \Illuminate\Validation\ValidationException) {
                 $status  = 422;
                 $message = 'Erro de validação';
@@ -38,16 +53,6 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => $message,
                     'errors'  => $e->errors(),
                 ], $status);
-            }
-
-            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-                $status  = 401;
-                $message = 'Não autenticado';
-            }
-
-            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
-                $status  = 404;
-                $message = 'Recurso não encontrado';
             }
 
             // Logging estruturado (sempre)

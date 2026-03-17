@@ -22,24 +22,6 @@ class TravelOrderController extends Controller
         $this->travelOrderService = $travelOrderService;
     }
 
-    // Listar pedidos (com filtros opcionais)
-    public function index(IndexTravelOrderRequest $request): JsonResponse
-    {
-        $orders = $this->travelOrderService->list($request->user(), $request->all());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Lista de Pedidos recuperada com sucesso',
-            'data'    => TravelOrderResource::collection($orders),
-            'meta'    => [
-                'total'        => $orders->total(),
-                'per_page'     => $orders->perPage(),
-                'current_page' => $orders->currentPage(),
-                'last_page'    => $orders->lastPage(),
-            ],
-        ]);
-    }
-
     // Criar pedido de viagem
     public function store(StoreTravelOrderRequest $request): JsonResponse
     {
@@ -50,6 +32,36 @@ class TravelOrderController extends Controller
             'message' => 'Pedido criada com sucesso',
             'data'    => new TravelOrderResource($order),
         ], 201);
+    }
+
+    // Editar pedido de viagem
+    public function update(StoreTravelOrderRequest $request, int $id): JsonResponse
+    {
+        $order = $this->travelOrderService->update($request->validated(), $id);
+
+        $this->authorize('update', $order);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pedido atualizado com sucesso',
+            'data'    => new TravelOrderResource($order),
+        ], 200);
+    }
+
+    // Atualizar status do pedido (aprovado ou cancelado)
+    public function updateStatus(UpdateTravelOrderStatusRequest $request, int $id): JsonResponse
+    {
+        $order = $this->travelOrderService->find($id);
+
+        $this->authorize('updateStatus', $order);
+
+        $order = $this->travelOrderService->updateStatus($id, $request->input('status'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status do pedido atualizado com sucesso',
+            'data'    => new TravelOrderResource($order),
+        ]);
     }
 
     // Detalhar pedido
@@ -66,19 +78,21 @@ class TravelOrderController extends Controller
         ]);
     }
 
-    // Atualizar status do pedido (aprovado ou cancelado)
-    public function updateStatus(UpdateTravelOrderStatusRequest $request, int $id): JsonResponse
+    // Listar pedidos (com filtros opcionais)
+    public function index(IndexTravelOrderRequest $request): JsonResponse
     {
-        $order = $this->travelOrderService->find($id);
-
-        $this->authorize('updateStatus', $order);
-
-        $order = $this->travelOrderService->updateStatus($id, $request->input('status'));
+        $orders = $this->travelOrderService->list($request->user(), $request->all());
 
         return response()->json([
             'success' => true,
-            'message' => 'Status do pedido atualizado com sucesso',
-            'data'    => new TravelOrderResource($order),
+            'message' => 'Lista de Pedidos recuperada com sucesso',
+            'data'    => TravelOrderResource::collection($orders),
+            'meta'    => [
+                'total'        => $orders->total(),
+                'per_page'     => $orders->perPage(),
+                'current_page' => $orders->currentPage(),
+                'last_page'    => $orders->lastPage(),
+            ],
         ]);
     }
 }

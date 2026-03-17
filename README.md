@@ -116,11 +116,12 @@ Gerar chaves
  - docker compose exec app php artisan key:generate
  - docker compose exec app php artisan jwt:secret
  
-#Criar migrations
+Criar migrations
  - docker compose exec app php artisan migrate --seed
 
-Acessar o página
-- http://localhost:8000/ - se mostrar logo do laravel 12, esta pronto para uso da API
+Acessar o projeto
+- API Home: http://localhost:8000
+- Swagger UI: http://localhost:8000/api/documentation
 
 Executar testes unitarios
 - docker compose exec app php artisan test

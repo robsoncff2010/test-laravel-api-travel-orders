@@ -89,6 +89,10 @@ O projeto inclui testes utilizando PHPUnit, cobrindo cenários essenciais:
  - O projeto foi desenvolvido e testado em ambiente WSL2 (Ubuntu) integrado ao Docker Desktop no Windows.  
 Para quem estiver em Linux nativo, basta instalar Docker e Docker Compose normalmente, sem necessidade de configuração adicional.
 
+📋 Pré-requisitos
+ - Docker e Docker Compose instalados.
+ - Caso não possua, siga o Guia Oficial de Instalação → https://docs.docker.com/engine/install/
+
 ▶️ Como Executar
 
 Clonar o repositório
@@ -102,10 +106,6 @@ Gerar arquivo .env
 
 ▶️ Executando com Docker
 
-Instalar Docker e Docker Compose
- - sudo apt-get update
- - sudo apt-get install docker.io docker-compose -y
-   
 Subir os containers
  - docker compose up -d --build
 

@@ -127,6 +127,9 @@ Limpar caches
 Acessar o página
 - http://localhost:8000/ - se mostrar logo do laravel 12, esta pronto para uso da API
 
+Executar testes unitarios
+- docker compose exec app php artisan test
+
 📜 Licença
 
 Este projeto está licenciado sob a MIT License, permitindo uso, modificação e distribuição, desde que seja mantida a nota de licença original.

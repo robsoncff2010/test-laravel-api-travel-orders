@@ -77,7 +77,7 @@ class TravelOrderTest extends TestCase
         $approver = User::factory()->create();
 
         $response = $this->withHeaders($this->authHeaders($approver))
-            ->putJson("/api/v1/travel-orders/{$order->id}/status", [
+            ->patchJson("/api/v1/travel-orders/{$order->id}/status", [
                 'status' => 'aprovado',
             ]);
 
@@ -108,7 +108,7 @@ class TravelOrderTest extends TestCase
         $order = TravelOrder::factory()->create(['user_id' => $user->id]);
 
         $response = $this->withHeaders($this->authHeaders($user))
-            ->putJson("/api/v1/travel-orders/{$order->id}/status", []);
+            ->patchJson("/api/v1/travel-orders/{$order->id}/status", []);
 
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['status']);

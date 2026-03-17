@@ -19,7 +19,7 @@ class TravelOrderPolicy
         return $order->user_id === $user->id;
     }
 
-    // Cada usuário só pode visualizar seus próprios pedidos
+    // Cada usuário só pode editar seus próprios pedidos
     public function update(User $user, TravelOrder $order): bool
     {
         return $order->user_id === $user->id;

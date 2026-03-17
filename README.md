@@ -90,6 +90,7 @@ O projeto inclui testes utilizando PHPUnit, cobrindo cenários essenciais:
 Para quem estiver em Linux nativo, basta instalar Docker e Docker Compose normalmente, sem necessidade de configuração adicional.
 
 ▶️ Como Executar
+
 Clonar o repositório
  - git clone https://github.com/robsoncff2010/test-laravel-api-travel-orders.git
 
@@ -100,6 +101,7 @@ Instalar dependencias
  - composer install
 
 ▶️ Executando com Docker
+
 Instalar Docker e Docker Compose
  - sudo apt-get update
  - sudo apt-get install docker.io docker-compose -y

@@ -30,7 +30,7 @@ Backend
 - Laravel 12
 - Eloquent ORM
 - Middleware de autenticação
-- JWT (JSON Web Token) – autenticação e autorização
+- JWT (JSON Web Token) → autenticação e autorização
 
 Banco de Dados
 - MySQL
@@ -40,15 +40,15 @@ Banco de Dados
 Documentação
 - OpenAPI 3.0.3 (Swagger)
 - Swagger UI
-- Schemas reutilizáveis – padronização de modelos
+- Schemas reutilizáveis → padronização de modelos
 
 Infraestrutura
-- Composer - gerenciador de dependências PHP
-- PHPUnit - testes automatizados
-- Docker - containerização do ambiente
-  - App - Laravel/PHP-FPM → porta 8000  
-  - Nginx - proxy reverso
-  - MySQL - banco de dados
+- Composer → gerenciador de dependências PHP
+- PHPUnit → testes automatizados
+- Docker → containerização do ambiente
+  - App → Laravel/PHP-FPM → porta 8000  
+  - Nginx → proxy reverso
+  - MySQL → banco de dados
 
 📐 Versionamento da API
 - Todas as rotas estão versionadas sob o prefixo `/api/v1/*`, garantindo compatibilidade futura e permitindo evolução da API sem quebra de clientes existentes.
@@ -60,19 +60,19 @@ Infraestrutura
 - Events & Listeners → disparo e tratamento de eventos quando o status de uma ordem muda
 - Exceptions → classes customizadas para regras de negócio
 - Middleware → autenticação JWT, rate limiting e proteção das rotas
-- Routes → organizadas sob /api/v1/* (login, register, travel-orders, status)
+- Routes → organizadas sob /api/v1/*
 - Migrations & Seeders → definição e popularização do banco de dados
 - Resources (Transformers) → padronização das respostas JSON
 - Swagger/OpenAPI → documentação integrada dentro da API
 
 ⚙️ Práticas adicionais
-- Exceções customizadas: tratamento diferenciado para ambientes de teste e produção
-- Consultas otimizadas: uso de `whenLoaded` para evitar N+1
-- Segurança: rate limiting para proteção contra abuso
-- Autorização: policies para regras de permissão
-- Eventos e listeners: monitoramento e execução automática em mudanças de status
-- Boas práticas de dados: datas sempre em UTC
-- Documentação integrada: Swagger disponível dentro da API (http://localhost:8000/api/documentation)
+- Exceções customizadas → tratamento diferenciado para ambientes de teste e produção
+- Consultas otimizadas → uso de `whenLoaded` para evitar N+1
+- Segurança → rate limiting para proteção contra abuso
+- Autorização → policies para regras de permissão
+- Eventos e listeners → monitoramento e execução automática em mudanças de status
+- Boas práticas de dados → datas sempre em UTC
+- Documentação integrada → Swagger disponível dentro da API (http://localhost:8000/api/documentation)
 
 🧪 Testes
 O projeto inclui testes utilizando PHPUnit, cobrindo cenários essenciais:

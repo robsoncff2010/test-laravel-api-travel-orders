@@ -110,9 +110,10 @@ Subir os containers
 Gerar arquivo .env
  - cp .env.example .env
 
-Gerar chave
+Gerar chaves
  - docker compose exec app php artisan key:generate
-
+ - docker compose exec app php artisan jwt:secret
+ 
 Criar migrations
  - docker compose exec app php artisan migrate
 

@@ -6,6 +6,8 @@ services:
     container_name: test-laravel-api-travel-orders
     volumes:
       - .:/var/www/html
+    command: >
+      sh -c "chmod -R 777 storage bootstrap/cache && php-fpm"
     networks:
       - laravel
 

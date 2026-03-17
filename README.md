@@ -85,16 +85,30 @@ O projeto inclui testes utilizando PHPUnit, cobrindo cenários essenciais:
 - Exceções → assegura que exceções customizadas sejam lançadas corretamente em casos inválidos.
 - Notificações → verifica se eventos e listeners disparam notificações ao alterar status.
 
+🖥️ Ambiente de Execução
+ - O projeto foi desenvolvido e testado em ambiente WSL2 (Ubuntu) integrado ao Docker Desktop no Windows.  
+Para quem estiver em Linux nativo, basta instalar Docker e Docker Compose normalmente, sem necessidade de configuração adicional.
+
 ▶️ Como Executar
 Clonar o repositório
  - git clone https://github.com/robsoncff2010/test-laravel-api-travel-orders.git
+
+Entrar na pasta do projeto:
+ - cd test-laravel-api-travel-orders
 
 Instalar dependencias
  - composer install
 
 ▶️ Executando com Docker
+Instalar Docker e Docker Compose
+ - sudo apt-get update
+ - sudo apt-get install docker.io docker-compose -y
+   
 Subir os containers
  - docker compose up -d --build
+
+Gerar arquivo .env
+ - cp .env.example .env
 
 Gerar chave
  - docker compose exec app php artisan key:generate
@@ -107,8 +121,8 @@ Limpar caches
  - docker compose exec app php artisan cache:clear
  - docker compose exec app php artisan route:clear
 
-Acessar o API (porta configurada no docker-compose)
-- http://localhost:8000/api/v1
+Acessar o página
+- http://localhost:8000/ - se mostrar logo do laravel 12, esta pronto para uso da API
 
 📜 Licença
 Este projeto está licenciado sob a MIT License, permitindo uso, modificação e distribuição, desde que seja mantida a nota de licença original.

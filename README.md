@@ -97,8 +97,8 @@ Clonar o repositório
 Entrar na pasta do projeto:
  - cd test-laravel-api-travel-orders
 
-Instalar dependencias
- - composer install
+Gerar arquivo .env
+ - cp .env.example .env
 
 ▶️ Executando com Docker
 
@@ -109,8 +109,8 @@ Instalar Docker e Docker Compose
 Subir os containers
  - docker compose up -d --build
 
-Gerar arquivo .env
- - cp .env.example .env
+Instalar dependencias
+ - docker compose exec app composer install
 
 Gerar chaves
  - docker compose exec app php artisan key:generate
@@ -118,11 +118,6 @@ Gerar chaves
  
 Criar migrations
  - docker compose exec app php artisan migrate
-
-Limpar caches
- - docker compose exec app php artisan config:clear
- - docker compose exec app php artisan cache:clear
- - docker compose exec app php artisan route:clear
 
 Acessar o página
 - http://localhost:8000/ - se mostrar logo do laravel 12, esta pronto para uso da API
